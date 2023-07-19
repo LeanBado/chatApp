@@ -1,11 +1,13 @@
-import { ID, Query } from "appwrite"
+import { ID, Permission, Query, Role } from "appwrite"
 import { useEffect, useState } from "react"
 import { Trash2 } from "react-feather"
 import Header from "../components/Header"
+import { useAuth } from "../utils/AuthContext"
 import client, { COLLECTION_ID_MESSAGES, databases, DATABASE_ID } from "./appWriteConfig"
 
 
 const Room = () => {
+    const {user} = useAuth()
     const [messages, setMessages] = useState([])
     const [messageBody, setMessageBody] = useState('');
 
@@ -28,13 +30,19 @@ const Room = () => {
 
     }, [])
 
+    
 
     const handlesubmit = async(event) => {
         event.preventDefault()
 
-        let payload = {
+        const payload = {
+            user_id: user.$id,
+            username: user.name,
             body: messageBody,
         }
+        const permissions = [
+            Permission.write(Role.user(user.$id))
+        ]
 
         const response = await databases.createDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, ID.unique(), payload)
 
@@ -81,8 +89,19 @@ const Room = () => {
                     {messages.map(message =>(
                         <div key={message.$id} className='message--wrapper'>
                             <div className="message--header">
+                            <p>
+                                {message?.username ? (
+                                    <span>{message.username}</span>
+                                ):(
+                                    <span>Anonymous user</span>
+                                )}
                                 <small className="message-timestamp">{new Date(message.$createdAt).toLocaleString()}</small>
-                                <Trash2 onClick={() => deleteMessage(message.$id)} className='delete--btn'></Trash2>
+                            </p>
+                                {message.$permissions.includes(`delete(\"user:${user.$id}\")`) 
+                                    && (
+                                     <Trash2 onClick={() => deleteMessage(message.$id)} className='delete--btn'></Trash2>
+                                    )
+                                }
                             </div>
                             <div className="message--body">
                                 <span>{message.body}</span>
