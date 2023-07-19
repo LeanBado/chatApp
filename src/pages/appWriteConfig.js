@@ -1,9 +1,11 @@
-import { Client, Databases } from "appwrite";
+import { Client, Databases, Account } from "appwrite";
 
 export const DATABASE_ID = import.meta.env.VITE_DATABASE_ID
 export const COLLECTION_ID_MESSAGES = import.meta.env.VITE_COLLECTION_ID_MESSAGES
 
 const client = new Client();
+export const account = new Account(client);
+
 export const databases = new Databases(client);
 
 client
