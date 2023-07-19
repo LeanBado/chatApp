@@ -1,6 +1,7 @@
 import { ID, Query } from "appwrite"
 import { useEffect, useState } from "react"
 import { Trash2 } from "react-feather"
+import Header from "../components/Header"
 import client, { COLLECTION_ID_MESSAGES, databases, DATABASE_ID } from "./appWriteConfig"
 
 
@@ -12,7 +13,7 @@ const Room = () => {
         getMessages()
 
        const unsuscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`, response => {
-    // Callback will be executed on changes for documents A and all files.
+
             if(response.events.includes('databases.*.collections.*.documents.*.create')){
                 setMessages(prevState => [response.payload, ...prevState])
                 console.log('evento creado')
@@ -64,31 +65,32 @@ const Room = () => {
 
   return (
     <main className="container">
-        <div className="room--container">
-            <form onSubmit={handlesubmit} id="message--form">
-                <div>
-                    <textarea required maxLength='100' placeholder="Say something..." onChange={(event) => {setMessageBody(event.target.value)}} value={messageBody}>
+        <Header></Header>
+            <div className="room--container">
+                <form onSubmit={handlesubmit} id="message--form">
+                    <div>
+                        <textarea required maxLength='100' placeholder="Say something..." onChange={(event) => {setMessageBody(event.target.value)}} value={messageBody}>
 
-                    </textarea>
-                </div>
-                <div className="send-btn--wrapper">
-                    <input type='submit' value='Send' className="btn btn--secondary"></input>
-                </div>
-            </form>
-            <div>
-                {messages.map(message =>(
-                    <div key={message.$id} className='message--wrapper'>
-                        <div className="message--header">
-                            <small className="message-timestamp">{new Date(message.$createdAt).toLocaleString()}</small>
-                            <Trash2 onClick={() => deleteMessage(message.$id)} className='delete--btn'></Trash2>
-                        </div>
-                        <div className="message--body">
-                            <span>{message.body}</span>
-                        </div>
+                        </textarea>
                     </div>
-                ))}
-            </div>
-        </div>            
+                    <div className="send-btn--wrapper">
+                        <input type='submit' value='Send' className="btn btn--secondary"></input>
+                    </div>
+                </form>
+                <div>
+                    {messages.map(message =>(
+                        <div key={message.$id} className='message--wrapper'>
+                            <div className="message--header">
+                                <small className="message-timestamp">{new Date(message.$createdAt).toLocaleString()}</small>
+                                <Trash2 onClick={() => deleteMessage(message.$id)} className='delete--btn'></Trash2>
+                            </div>
+                            <div className="message--body">
+                                <span>{message.body}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>            
     </main>
   )
 }

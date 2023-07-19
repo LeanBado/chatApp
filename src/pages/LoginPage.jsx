@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../utils/AuthContext'
 
 const LoginPage = () => {
@@ -39,6 +39,7 @@ const LoginPage = () => {
           <div className='field--wrapper'>
             <input className='btn btn--lg btn--main' type='submit' value='Login'></input>
           </div>
+          <p>Dont have an account? Register <Link to='/register'>HERE</Link></p>
         </form>
       </div>
    
